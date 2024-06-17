@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-custom-plugin-starter",
-	"version": "0.0.1",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"name": "node-auto-resize",
+	"version": "1.0.0",
+	"description": "Automatically resize the node when the content changes",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
@@ -20,5 +20,10 @@
 		"obsidian": "latest",
 		"tslib": "2.4.0",
 		"typescript": "4.7.4"
+	},
+	"dependencies": {
+		"@codemirror/state": "^6.4.1",
+		"@codemirror/view": "^6.28.1",
+		"monkey-around": "^3.0.0"
 	}
 }

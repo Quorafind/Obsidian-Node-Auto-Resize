@@ -1,7 +1,7 @@
 {
-	"id": "obsidian-custom-plugin-starter",
-	"name": "Custom Plugin Starter",
-	"version": "0.0.1",
+	"id": "node-auto-resize",
+	"name": "Node Auto Resize",
+	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
 	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
 	"author": "Boninall",
