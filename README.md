@@ -1,96 +1,58 @@
-# Obsidian Sample Plugin
+# Canvas Node Auto Resize
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An [Obsidian](https://obsidian.md/) plugin that automatically resizes the canvas node to fit its content.
 
-This project uses Typescript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in Typescript Definition format, which contains TSDoc comments describing what it does.
-
-**Note:** The Obsidian API is still in early alpha and is subject to change at any time!
-
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Changes the default font color to red using `styles.css`.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open Sample Modal" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
-
-## First time developing plugins?
-
-Quick starting guide for new plugin devs:
-
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
-
-## Releasing new releases
-
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
-
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
-
-## Adding your plugin to the community plugin list
-
-- Check https://github.com/obsidianmd/obsidian-releases/blob/master/plugin-review.md
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+![img](./media/node-auto-resize.gif)
 
 ## How to use
 
-- Clone this repo.
-- `npm i` or `yarn` to install dependencies
-- `npm run dev` to start compilation in watch mode.
+1. Install the plugin.
+2. Update content in node from canvas view.
+3. The node will automatically resize to fit its content.
 
-## Manually installing the plugin
+## Settings
 
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
+- **Enable width auto resize**;
+- **Set the max width**
 
-## Improve code quality with eslint (optional)
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- To use eslint with this project, make sure to install eslint from terminal:
-  - `npm install -g eslint`
-- To use eslint to analyze this project use this command:
-  - `eslint main.ts`
-  - eslint will then create a report with suggestions for code improvement by file and line number.
-- If your source code is in a folder, such as `src`, you can use eslint with this command to analyze all files in that folder:
-  - `eslint .\src\`
+## Installation
 
-## Funding URL
+### BRAT
 
-You can include funding URLs where people who use your plugin can financially support it.
+[BRAT](https://github.com/TfTHacker/obsidian42-brat) (Beta Reviewer's Auto-update Tool) is a plugin that allows users to
+install Obsidian plugins directly from GitHub with automatic updates.
 
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
+via Commands:
 
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
-```
+1. Ensure BRAT is installed
+2. Enter the command `BRAT: Plugins: Add a beta plugin for testing`
+3. Enter `Quorafind/Obsidian-Node-Auto-Resize`
+4. Click on Add Plugin
 
-If you have multiple URLs, you can also do:
+via Settings:
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
-```
+1. Ensure BRAT is installed
+2. Go to *Settings > BRAT > Beta Plugin List*
+3. Click on Add Beta plugin
+4. Enter `Quorafind/Obsidian-Node-Auto-Resize`
+5. Click on Add Plugin
 
-## API Documentation
+### Manual
 
-See https://github.com/obsidianmd/obsidian-api
+Option 1:
+
+1. Go to [Releases](https://github.com/Quorafind/Obsidian-Node-Auto-Resize/releases)
+2. Download the latest `Obsidian-Node-Auto-Resize-${version}.zip`
+3. Extract its contents
+4. Move the contents into /your-vault/.obsidian/plugins/obsidian-Node-Auto-Resize/
+5. Go to *Settings > Community plugins*
+6. Enable Node Auto Resize
+
+Option 2:
+
+1. Go to [Releases](https://github.com/Quorafind/Obsidian-Node-Auto-Resize/releases)
+2. Download the latest `main.js`, `styles.css` and `manifest.json`
+3. Move the files into /your-vault/.obsidian/plugins/obsidian-Node-Auto-Resize/
+5. Go to *Settings > Community plugins*
+6. Enable Node Auto Resize
+
