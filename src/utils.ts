@@ -1,4 +1,4 @@
-import { CanvasNode } from "obsidian";
+import { CanvasGroupNode, CanvasNode } from "obsidian";
 
 export function filterTouchingNodes(currentNode: CanvasNode, nodes: CanvasNode[]) {
 	return nodes.filter(node => node.id !== currentNode.id && isTouching(currentNode, node));
@@ -103,6 +103,8 @@ export function adjustPositionsRecursively({
 	for (const node of nodes) {
 		const currentX = node.bbox.minX;
 		const currentY = node.bbox.minY;
+
+		if ((node as CanvasGroupNode).label) continue;
 
 		if (isTouchingBottom(movedNode, node) && adjustedHeight !== 0) {
 			requestMoveQueue.push({

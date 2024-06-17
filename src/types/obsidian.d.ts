@@ -17,4 +17,8 @@ declare module "obsidian" {
 		resize: (props: { width: number, height: number }) => void;
 		bbox: { minX: number, minY: number, maxX: number, maxY: number };
 	}
+
+	interface CanvasGroupNode extends CanvasNode {
+		label: string;
+	}
 }

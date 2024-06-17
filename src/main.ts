@@ -5,8 +5,7 @@ import {
 	PluginSettingTab,
 	Setting,
 	CanvasNode,
-	debounce,
-	editorEditorField
+	debounce
 } from 'obsidian';
 import { EditorView, ViewUpdate } from "@codemirror/view";
 import { adjustPositionsRecursively } from "./utils";
