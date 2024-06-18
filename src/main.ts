@@ -38,7 +38,6 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 				const originalWidth = editor.node.width;
 
 				const nodes = Array.from(editor.node.canvas.nodes.values()) as CanvasNode[];
-				// const filteredNodes = filterTouchingNodes(editor.node, nodes);
 
 				adjustPositionsRecursively({
 					movedNode: editor.node,
@@ -54,14 +53,6 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 				});
 
 				plugin.debounceSaveCanvas(editor.node.canvas);
-
-
-				// const canvas = editor.node.canvas;
-				// const bbox = canvas.getViewportBBox();
-				// console.log(bbox, editor.node.y, height);
-				// if (height && ((editor.node.y + (height / 2)) > bbox.maxY)) {
-				// 	canvas.panTo((bbox.minX + bbox.maxX) / 2, editor.node.y + (height));
-				// }
 			}
 		}
 	});
