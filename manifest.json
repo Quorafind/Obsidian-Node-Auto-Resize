@@ -3,7 +3,7 @@
 	"name": "Node Auto Resize",
 	"version": "1.0.0",
 	"minAppVersion": "1.2.0",
-	"description": "Automatically resize the node when the content changes",
+	"description": "Automatically resize the node when the content changes.",
 	"author": "Boninall",
 	"authorUrl": "https://github.com/Quorafind",
 	"fundingUrl": {

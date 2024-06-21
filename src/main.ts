@@ -99,7 +99,7 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Auto Resize Width')
+			.setName('Auto resize for width')
 			.setDesc('Automatically resize the width of the node.')
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.widthAutoResize)
@@ -114,7 +114,7 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 
 		if (this.plugin.settings.widthAutoResize) {
 			new Setting(containerEl)
-				.setName("Max Width")
+				.setName("Max width for auto resize")
 				.setDesc("The maximum width of the node.")
 				.addText(text => text
 					.setValue(this.plugin.settings.maxWidth.toString())
