@@ -1,6 +1,6 @@
 {
 	"name": "node-auto-resize",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Automatically resize the node when the content changes",
 	"main": "main.js",
 	"scripts": {
