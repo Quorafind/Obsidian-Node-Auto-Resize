@@ -36,10 +36,16 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					
 					const editorView = v.view as EditorView;
 					const currentDoc = editorView.state.doc;
-					const firstLineLength = currentDoc.line(1).length;
-					const headerNumber = countLeadingHashtags(currentDoc.line(1).text);
-					const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
-					width = editorView.defaultCharacterWidth * firstLineLength * emfactor + 120;
+					let longestLineLength = 0;
+					for (const line of currentDoc.iterLines()){
+						const firstLineLength = line.length;
+						const headerNumber = countLeadingHashtags(line);
+						const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+						longestLineLength = Math.max(longestLineLength, editorView.defaultCharacterWidth * firstLineLength * emfactor + 120);
+					}
+					width = longestLineLength;
+					
+					
 				}
 				
 
