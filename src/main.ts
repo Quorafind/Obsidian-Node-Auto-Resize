@@ -14,11 +14,13 @@ interface NodeAutoResizeSettings {
 	maxWidth: number;
 	widthAutoResize: boolean;
 	emfactor: string;
+	trueWidth: boolean;
 }
 
 const DEFAULT_SETTINGS: NodeAutoResizeSettings = {
 	maxWidth: 400,
 	widthAutoResize: true,
+	trueWidth: true,
 	emfactor: "2.0,1.8,1.6,1.4,1.2,1.1"
 };
 
@@ -36,15 +38,21 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					
 					const editorView = v.view as EditorView;
 					const currentDoc = editorView.state.doc;
-					let longestLineLength = 0;
-					for (const line of currentDoc.iterLines()){
-						const firstLineLength = line.length;
-						const headerNumber = countLeadingHashtags(line);
+					if (plugin.settings.trueWidth){
+						let longestLineLength = 0;
+						for (const line of currentDoc.iterLines()){
+							const firstLineLength = line.length;
+							const headerNumber = countLeadingHashtags(line);
+							const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+							longestLineLength = Math.max(longestLineLength, editorView.defaultCharacterWidth * firstLineLength * emfactor + 120);
+						}
+						width = longestLineLength;
+					} else {
+						const firstLineLength = currentDoc.line(1).length;
+						const headerNumber = countLeadingHashtags(currentDoc.line(1).text);
 						const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
-						longestLineLength = Math.max(longestLineLength, editorView.defaultCharacterWidth * firstLineLength * emfactor + 120);
+						width = editorView.defaultCharacterWidth * firstLineLength * emfactor + 120;
 					}
-					width = longestLineLength;
-					
 					
 				}
 				
@@ -149,6 +157,19 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 					.onChange(async (value) => {
 						this.plugin.settings.maxWidth = parseInt(value);
 						await this.plugin.saveSettings();
+					}));
+			new Setting(containerEl)
+				.setName('True width as width')
+				.setDesc('Calculate width according to widest line instead of the first.')
+				.addToggle(toggle => toggle
+					.setValue(this.plugin.settings.trueWidth)
+					.onChange(async (value) => {
+						this.plugin.settings.trueWidth = value;
+						await this.plugin.saveSettings();
+	
+						setTimeout(() => {
+							this.display();
+						}, 100);
 					}));
 			new Setting(containerEl)
 				.setName("em for h1-h6")
