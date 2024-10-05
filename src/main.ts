@@ -13,11 +13,13 @@ import { adjustPositionsRecursively } from "./utils";
 interface NodeAutoResizeSettings {
 	maxWidth: number;
 	widthAutoResize: boolean;
+	emfactor: string;
 }
 
 const DEFAULT_SETTINGS: NodeAutoResizeSettings = {
 	maxWidth: 400,
 	widthAutoResize: true,
+	emfactor: "2.0,1.8,1.6,1.4,1.2,1.1"
 };
 
 const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
@@ -31,8 +33,15 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 				let width = editor.node.width;
 
 				if (plugin.settings.widthAutoResize) {
-					width = (v.view as EditorView).defaultCharacterWidth * (v.view as EditorView).state.doc.line(1).length + 120;
+					
+					const editorView = v.view as EditorView;
+					const currentDoc = editorView.state.doc;
+					const firstLineLength = currentDoc.line(1).length;
+					const headerNumber = countLeadingHashtags(currentDoc.line(1).text);
+					const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+					width = editorView.defaultCharacterWidth * firstLineLength * emfactor + 120;
 				}
+				
 
 				const originalHeight = editor.node.height;
 				const originalWidth = editor.node.width;
@@ -46,7 +55,7 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					adjustedHeight: height - originalHeight,
 					adjustedWidth: (width > plugin.settings.maxWidth ? editor.node.width : width) - originalWidth,
 				});
-
+				
 				editor.node.resize({
 					width: width > plugin.settings.maxWidth ? editor.node.width : width,
 					height: height + 20,
@@ -85,6 +94,19 @@ export default class NodeAutoResizePlugin extends Plugin {
 
 }
 
+function getEmFactor(emfactor: string, headerNumber: number): number {
+	if (headerNumber == 0 || headerNumber > 6) return 1.0;
+	const emfactorArray = emfactor.split(",");
+	const parsedValue = parseFloat(emfactorArray[headerNumber - 1]);
+
+	return isNaN(parsedValue) ? 1.0 : parsedValue;
+}
+
+function countLeadingHashtags(input: string): number {
+    const match = input.trimStart().match(/#+ /); // Match one or more '#' at the start of the string
+    return match ? match[0].length -1 : 0; // Return the length of the match or 0 if there are none
+}
+
 class NodeAutoResizeSettingTab extends PluginSettingTab {
 	plugin: NodeAutoResizePlugin;
 
@@ -120,6 +142,15 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.maxWidth.toString())
 					.onChange(async (value) => {
 						this.plugin.settings.maxWidth = parseInt(value);
+						await this.plugin.saveSettings();
+					}));
+			new Setting(containerEl)
+				.setName("em for h1-h6")
+				.setDesc("Comma seperated values of em (1.8 means 180% of the default) for h1-h6. Adjust to your own css configs if needed")
+				.addText(text => text
+					.setValue(this.plugin.settings.emfactor)
+					.onChange(async (value) => {
+						this.plugin.settings.emfactor = value;
 						await this.plugin.saveSettings();
 					}));
 		}
