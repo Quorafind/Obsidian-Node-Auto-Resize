@@ -13,15 +13,13 @@ import { adjustPositionsRecursively } from "./utils";
 interface NodeAutoResizeSettings {
 	maxWidth: number;
 	widthAutoResize: boolean;
-	emfactor: string;
 	trueWidth: boolean;
 }
 
 const DEFAULT_SETTINGS: NodeAutoResizeSettings = {
 	maxWidth: 400,
 	widthAutoResize: true,
-	trueWidth: true,
-	emfactor: "2.0,1.8,1.6,1.4,1.2,1.1"
+	trueWidth: true
 };
 
 const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
@@ -43,14 +41,14 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 						for (const line of currentDoc.iterLines()){
 							const firstLineLength = line.length;
 							const headerNumber = countLeadingHashtags(line);
-							const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+							const emfactor = getEmFactor(headerNumber);
 							longestLineLength = Math.max(longestLineLength, editorView.defaultCharacterWidth * firstLineLength * emfactor + 120);
 						}
 						width = longestLineLength;
 					} else {
 						const firstLineLength = currentDoc.line(1).length;
 						const headerNumber = countLeadingHashtags(currentDoc.line(1).text);
-						const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+						const emfactor = getEmFactor(headerNumber);
 						width = editorView.defaultCharacterWidth * firstLineLength * emfactor + 120;
 					}
 					
@@ -108,11 +106,9 @@ export default class NodeAutoResizePlugin extends Plugin {
 
 }
 
-function getEmFactor(emfactor: string, headerNumber: number): number {
-	if (headerNumber == 0 || headerNumber > 6) return 1.0;
-	const emfactorArray = emfactor.split(",");
-	const parsedValue = parseFloat(emfactorArray[headerNumber - 1]);
-
+function getEmFactor(headerNumber: number): number {
+	const emVal = document.querySelector("body")?.getCssPropertyValue(`--h${headerNumber}-size`).replace("em", "") ?? "1";
+	const parsedValue = parseFloat(emVal);
 	return isNaN(parsedValue) ? 1.0 : parsedValue;
 }
 
@@ -170,15 +166,6 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 						setTimeout(() => {
 							this.display();
 						}, 100);
-					}));
-			new Setting(containerEl)
-				.setName("em for h1-h6")
-				.setDesc("Comma seperated values of em (1.8 means 180% of the default) for h1-h6. Adjust to your own css configs if needed")
-				.addText(text => text
-					.setValue(this.plugin.settings.emfactor)
-					.onChange(async (value) => {
-						this.plugin.settings.emfactor = value;
-						await this.plugin.saveSettings();
 					}));
 		}
 	}
