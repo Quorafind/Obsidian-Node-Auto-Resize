@@ -22,6 +22,8 @@ const DEFAULT_SETTINGS: NodeAutoResizeSettings = {
 	trueWidth: true
 };
 
+var trueCharacterWidth: Map<string, number>;
+
 const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 	return EditorView.updateListener.of((v: ViewUpdate) => {
 		if (v.docChanged) {
@@ -39,10 +41,13 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					if (plugin.settings.trueWidth){
 						let longestLineLength = 0;
 						for (const line of currentDoc.iterLines()){
-							const firstLineLength = line.length;
 							const headerNumber = countLeadingHashtags(line);
-							const emfactor = getEmFactor(headerNumber);
-							longestLineLength = Math.max(longestLineLength, editorView.defaultCharacterWidth * firstLineLength * emfactor + 120);
+							const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+							const lineCharacterWidths = Array.from(line).map(ch =>
+								trueCharacterWidth.get(ch) ?? editorView.defaultCharacterWidth
+							);
+							const trueLineLength = lineCharacterWidths.reduce((acc, curr)=> acc+curr, 0);
+							longestLineLength = Math.max(longestLineLength, trueLineLength * emfactor + 120);
 						}
 						width = longestLineLength;
 					} else {
@@ -65,7 +70,7 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					nodes,
 				}, {
 					adjustedHeight: height - originalHeight,
-					adjustedWidth: (width > plugin.settings.maxWidth ? editor.node.width : width) - originalWidth,
+					adjustedWidth: plugin.settings.widthAutoResize ? (Math.max(width, plugin.settings.maxWidth) - originalWidth) : 0,
 				});
 				
 				editor.node.resize({
@@ -90,6 +95,8 @@ export default class NodeAutoResizePlugin extends Plugin {
 		this.loadSettings();
 		this.addSettingTab(new NodeAutoResizeSettingTab(this.app, this));
 		this.registerEditorExtension([updateNodeSize(this)]);
+		this.registerEvent(this.app.workspace.on('css-change', populateTrueWidths)); //Repopulate on font change
+		populateTrueWidths(); 														 //Populate the firs time the addon is loaded
 	}
 
 	onunload() {
@@ -106,9 +113,37 @@ export default class NodeAutoResizePlugin extends Plugin {
 
 }
 
-function getEmFactor(headerNumber: number): number {
-	const emVal = document.querySelector("body")?.getCssPropertyValue(`--h${headerNumber}-size`).replace("em", "") ?? "1";
-	const parsedValue = parseFloat(emVal);
+
+function measureCharacterWidths(font: string, size: string): Map<string, number> {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+        throw new Error("Unable to get canvas 2D context"); // Should never fail in the context of Obsidian
+    }
+    ctx.font = `${size} ${font}`;
+    const widthMap = new Map<string, number>();
+    for (let charCode = 65; charCode <= 90; charCode++) { // A-Z
+        const char = String.fromCharCode(charCode);
+        widthMap.set(char, ctx.measureText(char).width);
+    }
+    for (let charCode = 97; charCode <= 122; charCode++) { // a-z
+        const char = String.fromCharCode(charCode);
+        widthMap.set(char, ctx.measureText(char).width);
+    }
+    return widthMap;
+}
+
+function populateTrueWidths(){
+	const font = document.querySelector("body")?.getCssPropertyValue("font-family") ?? "Segeo UI"; //Will probably never fallback to segeo UI anyways
+	const size = document.querySelector("body")?.getCssPropertyValue("font-size") ?? "15px"; //Will probably never fallback to segeo UI anyways
+	trueCharacterWidth = measureCharacterWidths(font, size);
+}
+
+function getEmFactor(emfactor: string, headerNumber: number): number {
+	if (headerNumber == 0 || headerNumber > 6) return 1.0;
+	const emfactorArray = emfactor.split(",");
+	const parsedValue = parseFloat(emfactorArray[headerNumber - 1]);
+
 	return isNaN(parsedValue) ? 1.0 : parsedValue;
 }
 
