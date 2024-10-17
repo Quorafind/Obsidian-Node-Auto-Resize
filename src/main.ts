@@ -13,15 +13,13 @@ import { adjustPositionsRecursively } from "./utils";
 interface NodeAutoResizeSettings {
 	maxWidth: number;
 	widthAutoResize: boolean;
-	emfactor: string;
 	trueWidth: boolean;
 }
 
 const DEFAULT_SETTINGS: NodeAutoResizeSettings = {
 	maxWidth: 400,
 	widthAutoResize: true,
-	trueWidth: true,
-	emfactor: "2.0,1.8,1.6,1.4,1.2,1.1"
+	trueWidth: true
 };
 
 var trueCharacterWidth: Map<string, number>;
@@ -55,7 +53,7 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					} else {
 						const firstLineLength = currentDoc.line(1).length;
 						const headerNumber = countLeadingHashtags(currentDoc.line(1).text);
-						const emfactor = getEmFactor(plugin.settings.emfactor, headerNumber);
+						const emfactor = getEmFactor(headerNumber);
 						width = editorView.defaultCharacterWidth * firstLineLength * emfactor + 120;
 					}
 					
@@ -114,6 +112,7 @@ export default class NodeAutoResizePlugin extends Plugin {
 	}
 
 }
+
 
 function measureCharacterWidths(font: string, size: string): Map<string, number> {
     const canvas = document.createElement('canvas');
@@ -202,15 +201,6 @@ class NodeAutoResizeSettingTab extends PluginSettingTab {
 						setTimeout(() => {
 							this.display();
 						}, 100);
-					}));
-			new Setting(containerEl)
-				.setName("em for h1-h6")
-				.setDesc("Comma seperated values of em (1.8 means 180% of the default) for h1-h6. Adjust to your own css configs if needed")
-				.addText(text => text
-					.setValue(this.plugin.settings.emfactor)
-					.onChange(async (value) => {
-						this.plugin.settings.emfactor = value;
-						await this.plugin.saveSettings();
 					}));
 		}
 	}
