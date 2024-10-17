@@ -72,7 +72,7 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 					nodes,
 				}, {
 					adjustedHeight: height - originalHeight,
-					adjustedWidth: (width > plugin.settings.maxWidth ? editor.node.width : width) - originalWidth,
+					adjustedWidth: plugin.settings.widthAutoResize ? (Math.max(width, plugin.settings.maxWidth) - originalWidth) : 0,
 				});
 				
 				editor.node.resize({
