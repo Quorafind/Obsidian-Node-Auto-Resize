@@ -36,7 +36,9 @@ const updateNodeSize = (plugin: NodeAutoResizePlugin) => {
 			const editor = v.state.field(editorInfoField);
 			if (editor?.node) {
 				console.log(editor.node);
-				const height = (v.view as EditorView).contentHeight;
+				const EXTRA_VERTICAL_PADDING = 18;
+				const height = (v.view as EditorView).contentHeight + EXTRA_VERTICAL_PADDING;
+
 
 				if (editor.node.height === height) return;
 				let width = editor.node.width;
